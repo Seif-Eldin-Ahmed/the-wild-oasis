@@ -43,7 +43,10 @@ function AdminOnlyInDemo({ children }) {
 
 function App() {
   return (
-    <DarkModeProvider>
+    <DarkModeProvider
+      storageKey="wild-oasis-production-theme"
+      initialMode={false}
+    >
       <QueryClientProvider client={queryClient}>
         <ReactQueryDevtools initialIsOpen={false} />
 

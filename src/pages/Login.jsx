@@ -13,10 +13,15 @@ const LoginLayout = styled.main`
   background-color: var(--color-grey-50);
 `;
 
+const LoginBrand = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
 function Login() {
   return (
     <LoginLayout>
-      <Logo />
+      <LoginBrand><Logo /></LoginBrand>
       <Heading as="h4">Log in to your account</Heading>
       <LoginForm />
     </LoginLayout>
