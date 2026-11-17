@@ -1,10 +1,12 @@
 import supabase, { supabaseUrl } from "./supabase";
+import { rejectDemoMutation } from "../utils/demoMode";
 
 export async function signup({
   fullName,
   email,
   password,
 }) {
+  await rejectDemoMutation();
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
@@ -54,6 +56,7 @@ export async function updateCurrentUser({
   fullName,
   avatar,
 }) {
+  await rejectDemoMutation();
   // 1. Update password OR fullName
   let updateData;
   if (password) updateData = { password };

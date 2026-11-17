@@ -7,6 +7,7 @@ import {
   HiOutlineHomeModern,
   HiOutlineUsers,
 } from "react-icons/hi2";
+import { useUser } from "../features/authentication/useUser";
 
 const NavList = styled.ul`
   display: flex;
@@ -20,7 +21,6 @@ const StyledNavLink = styled(NavLink)`
     display: flex;
     align-items: center;
     gap: 1.2rem;
-
     color: var(--color-grey-600);
     font-size: 1.6rem;
     font-weight: 500;
@@ -28,7 +28,6 @@ const StyledNavLink = styled(NavLink)`
     transition: all 0.3s;
   }
 
-  /* This works because react-router places the active class on the active NavLink */
   &:hover,
   &:active,
   &.active:link,
@@ -54,39 +53,16 @@ const StyledNavLink = styled(NavLink)`
 `;
 
 function MainNav() {
+  const { isDemoVisitor } = useUser();
+
   return (
     <nav>
       <NavList>
-        <li>
-          <StyledNavLink to="/dashboard">
-            <HiOutlineHome />
-            <span>Home</span>
-          </StyledNavLink>
-        </li>
-        <li>
-          <StyledNavLink to="/bookings">
-            <HiOutlineCalendarDays />
-            <span>Bookings</span>
-          </StyledNavLink>
-        </li>
-        <li>
-          <StyledNavLink to="/cabins">
-            <HiOutlineHomeModern />
-            <span>Cabins</span>
-          </StyledNavLink>
-        </li>{" "}
-        <li>
-          <StyledNavLink to="/users">
-            <HiOutlineUsers />
-            <span>Users</span>
-          </StyledNavLink>
-        </li>{" "}
-        <li>
-          <StyledNavLink to="/settings">
-            <HiOutlineCog6Tooth />
-            <span>Settings</span>
-          </StyledNavLink>
-        </li>
+        <li><StyledNavLink to="/dashboard"><HiOutlineHome /><span>Home</span></StyledNavLink></li>
+        <li><StyledNavLink to="/bookings"><HiOutlineCalendarDays /><span>Bookings</span></StyledNavLink></li>
+        <li><StyledNavLink to="/cabins"><HiOutlineHomeModern /><span>Cabins</span></StyledNavLink></li>
+        {!isDemoVisitor && <li><StyledNavLink to="/users"><HiOutlineUsers /><span>Users</span></StyledNavLink></li>}
+        <li><StyledNavLink to="/settings"><HiOutlineCog6Tooth /><span>Settings</span></StyledNavLink></li>
       </NavList>
     </nav>
   );

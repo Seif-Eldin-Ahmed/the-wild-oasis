@@ -25,6 +25,7 @@ import Booking from "./pages/Booking";
 import Checkin from "./pages/Checkin";
 import ProtectedRoute from "./ui/ProtectedRoute";
 import { DarkModeProvider } from "./context/DarkModeContext";
+import { useUser } from "./features/authentication/useUser";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -34,6 +35,11 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+function AdminOnlyInDemo({ children }) {
+  const { isDemoVisitor } = useUser();
+  return isDemoVisitor ? <Navigate replace to="/dashboard" /> : children;
+}
 
 function App() {
   return (
@@ -74,12 +80,12 @@ function App() {
                 element={<Checkin />}
               />
               <Route path="cabins" element={<Cabins />} />
-              <Route path="users" element={<Users />} />
+              <Route path="users" element={<AdminOnlyInDemo><Users /></AdminOnlyInDemo>} />
               <Route
                 path="settings"
                 element={<Settings />}
               />
-              <Route path="account" element={<Account />} />
+              <Route path="account" element={<AdminOnlyInDemo><Account /></AdminOnlyInDemo>} />
             </Route>
 
             <Route path="login" element={<Login />} />

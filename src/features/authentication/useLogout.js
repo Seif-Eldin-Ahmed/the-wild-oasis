@@ -12,8 +12,9 @@ export function useLogout() {
   const { mutate: logout, isLoading } = useMutation({
     mutationFn: logoutApi,
     onSuccess: () => {
-      queryClient.removeQueries();
-      navigate("/login", { replace: true });
+      queryClient.clear();
+      queryClient.setQueryData(["user"], null);
+      navigate("/dashboard", { replace: true });
     },
   });
 

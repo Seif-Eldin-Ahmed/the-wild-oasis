@@ -18,6 +18,7 @@ import Modal from "../../ui/Modal";
 import ConfirmDelete from "../../ui/ConfirmDelete";
 import { useDeleteBooking } from "./useDeleteBooking";
 import Empty from "../../ui/Empty";
+import { useUser } from "../authentication/useUser";
 
 const HeadingGroup = styled.div`
   display: flex;
@@ -27,6 +28,7 @@ const HeadingGroup = styled.div`
 
 function BookingDetail() {
   const { booking, isLoading } = useBooking();
+  const { isDemoVisitor } = useUser();
   const { checkout, isCheckingOut } = useCheckout();
   const { isDeleting, deleteBooking } = useDeleteBooking();
 
@@ -61,7 +63,7 @@ function BookingDetail() {
       <BookingDataBox booking={booking} />
 
       <ButtonGroup>
-        {status === "unconfirmed" && (
+        {!isDemoVisitor && status === "unconfirmed" && (
           <Button
             onClick={() =>
               navigate(`/checkin/${bookingId}`)
@@ -71,7 +73,7 @@ function BookingDetail() {
           </Button>
         )}
 
-        {status === "checked-in" && (
+        {!isDemoVisitor && status === "checked-in" && (
           <Button
             icon={<HiArrowUpOnSquare />}
             onClick={() => checkout(bookingId)}
@@ -81,7 +83,7 @@ function BookingDetail() {
           </Button>
         )}
 
-        <Modal>
+        {!isDemoVisitor && <Modal>
           <Modal.Open opens="delete">
             <Button variation="danger">
               Delete booking
@@ -99,7 +101,7 @@ function BookingDetail() {
               }
             />
           </Modal.Window>
-        </Modal>
+        </Modal>}
 
         <Button variation="secondary" onClick={moveBack}>
           Back

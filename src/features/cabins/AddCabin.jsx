@@ -1,8 +1,11 @@
 import Button from "../../ui/Button";
 import CreateCabinForm from "./CreateCabinForm";
 import Modal from "../../ui/Modal";
+import { useUser } from "../authentication/useUser";
 
 function AddCabin() {
+  const { isDemoVisitor } = useUser();
+  if (isDemoVisitor) return null;
   return (
     <div>
       <Modal>

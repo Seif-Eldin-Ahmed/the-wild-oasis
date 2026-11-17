@@ -7,6 +7,8 @@ import { subtractDates } from "../utils/helpers";
 import { bookings } from "./data-bookings";
 import { cabins } from "./data-cabins";
 import { guests } from "./data-guests";
+import { rejectDemoMutation } from "../utils/demoMode";
+import { useUser } from "../features/authentication/useUser";
 
 // const originalSettings = {
 //   minBookingLength: 3,
@@ -102,8 +104,10 @@ async function createBookings() {
 
 function Uploader() {
   const [isLoading, setIsLoading] = useState(false);
+  const { isDemoVisitor } = useUser();
 
   async function uploadAll() {
+    await rejectDemoMutation();
     setIsLoading(true);
     // Bookings need to be deleted FIRST
     await deleteBookings();
@@ -119,6 +123,7 @@ function Uploader() {
   }
 
   async function uploadBookings() {
+    await rejectDemoMutation();
     setIsLoading(true);
     await deleteBookings();
     await createBookings();
@@ -140,13 +145,13 @@ function Uploader() {
     >
       <h3>SAMPLE DATA</h3>
 
-      <Button onClick={uploadAll} disabled={isLoading}>
+      {!isDemoVisitor && <Button onClick={uploadAll} disabled={isLoading}>
         Upload ALL
-      </Button>
+      </Button>}
 
-      <Button onClick={uploadBookings} disabled={isLoading}>
+      {!isDemoVisitor && <Button onClick={uploadBookings} disabled={isLoading}>
         Upload bookings ONLY
-      </Button>
+      </Button>}
     </div>
   );
 }

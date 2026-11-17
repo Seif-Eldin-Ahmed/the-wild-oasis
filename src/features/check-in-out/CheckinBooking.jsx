@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import { formatCurrency } from "../../utils/helpers";
 import { useCheckin } from "./useCheckin";
 import { useSettings } from "../settings/useSettings";
+import { useUser } from "../authentication/useUser";
 
 const Box = styled.div`
   /* Box */
@@ -25,6 +26,7 @@ const Box = styled.div`
 `;
 
 function CheckinBooking() {
+  const { isDemoVisitor } = useUser();
   const [addBreakfast, setAddBreakfast] = useState(false);
   const [confirmPaid, setConfirmPaid] = useState(false);
   const { booking, isLoading } = useBooking();
@@ -83,7 +85,9 @@ function CheckinBooking() {
 
       <BookingDataBox booking={booking} />
 
-      {!hasBreakfast && (
+      {isDemoVisitor && <Box>Check-in is disabled in the public demo. This sample booking is read-only.</Box>}
+
+      {!isDemoVisitor && !hasBreakfast && (
         <Box>
           <Checkbox
             checked={addBreakfast}
@@ -99,7 +103,7 @@ function CheckinBooking() {
         </Box>
       )}
 
-      <Box>
+      {!isDemoVisitor && <Box>
         <Checkbox
           checked={confirmPaid}
           onChange={() =>
@@ -118,15 +122,15 @@ function CheckinBooking() {
                 optionalBreakfastPrice,
               )})`}
         </Checkbox>
-      </Box>
+      </Box>}
 
       <ButtonGroup>
-        <Button
+        {!isDemoVisitor && <Button
           onClick={handleCheckin}
           disabled={!confirmPaid || isCheckingIn}
         >
           Check in booking #{bookingId}
-        </Button>
+        </Button>}
         <Button variation="secondary" onClick={moveBack}>
           Back
         </Button>

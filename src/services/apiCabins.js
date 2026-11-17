@@ -1,6 +1,9 @@
 import supabase, { supabaseUrl } from "./supabase";
+import { isDemoVisitor, rejectDemoMutation } from "../utils/demoMode";
+import { demoCabins } from "./demoData";
 
 export async function getCabins() {
+  if (await isDemoVisitor()) return demoCabins;
   const { data, error } = await supabase
     .from("cabins")
     .select("*");
@@ -14,6 +17,7 @@ export async function getCabins() {
 }
 
 export async function createEditCabin(newCabin, id) {
+  await rejectDemoMutation();
   const hasImagePath =
     newCabin.image?.startsWith?.(supabaseUrl);
 
@@ -73,6 +77,7 @@ export async function createEditCabin(newCabin, id) {
 }
 
 export async function deleteCabin(id) {
+  await rejectDemoMutation();
   const { data, error } = await supabase
     .from("cabins")
     .delete()

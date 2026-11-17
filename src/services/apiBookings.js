@@ -1,12 +1,25 @@
 import { PAGE_SIZE } from "../utils/constants";
 import { getToday } from "../utils/helpers";
 import supabase from "./supabase";
+import {
+  isDemoVisitor,
+  rejectDemoMutation,
+} from "../utils/demoMode";
+import {
+  demoBookings,
+  getDemoBookings,
+  getDemoBookingsAfterDate,
+  getDemoStaysAfterDate,
+  getDemoTodayActivity,
+} from "./demoData";
 
 export async function getBookings({
   filter,
   sortBy,
   page,
 }) {
+  if (await isDemoVisitor())
+    return getDemoBookings({ filter, sortBy, page });
   let query = supabase
     .from("bookings")
     .select(
@@ -44,6 +57,13 @@ export async function getBookings({
   return { data, count };
 }
 export async function getBooking(id) {
+  if (await isDemoVisitor()) {
+    const booking = demoBookings.find(
+      (row) => String(row.id) === String(id),
+    );
+    if (!booking) throw new Error("Booking not found");
+    return booking;
+  }
   const { data, error } = await supabase
     .from("bookings")
     .select("*, cabins(*), guests(*)")
@@ -61,11 +81,19 @@ export async function getBooking(id) {
 // Returns all BOOKINGS that are were created after the given date. Useful to get bookings created in the last 30 days, for example.
 // Date: ISOString
 export async function getBookingsAfterDate(date) {
-  const { data, error } = await supabase
+  if (await isDemoVisitor()) return getDemoBookingsAfterDate(date);
+  let query = supabase
     .from("bookings")
     .select("created_at, totalPrice, extrasPrice")
-    .gte("created_at", date)
     .lte("created_at", getToday({ end: true }));
+
+  // Apply the starting date only when a specific period is selected.
+  // When date is null, return all historical bookings.
+  if (date) {
+    query = query.gte("created_at", date);
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     console.error(error);
@@ -77,11 +105,18 @@ export async function getBookingsAfterDate(date) {
 
 // Returns all STAYS that are were created after the given date
 export async function getStaysAfterDate(date) {
-  const { data, error } = await supabase
+  if (await isDemoVisitor()) return getDemoStaysAfterDate(date);
+  let query = supabase
     .from("bookings")
     .select("*, guests(fullName)")
-    .gte("startDate", date)
     .lte("startDate", getToday());
+
+  // When date is null, return all stays up to today.
+  if (date) {
+    query = query.gte("startDate", date);
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     console.error(error);
@@ -93,6 +128,7 @@ export async function getStaysAfterDate(date) {
 
 // Activity means that there is a check in or a check out today
 export async function getStaysTodayActivity() {
+  if (await isDemoVisitor()) return getDemoTodayActivity();
   const { data, error } = await supabase
     .from("bookings")
     .select("*, guests(fullName, nationality, countryFlag)")
@@ -113,6 +149,7 @@ export async function getStaysTodayActivity() {
 }
 
 export async function updateBooking(id, obj) {
+  await rejectDemoMutation();
   const { data, error } = await supabase
     .from("bookings")
     .update(obj)
@@ -128,6 +165,7 @@ export async function updateBooking(id, obj) {
 }
 
 export async function deleteBooking(id) {
+  await rejectDemoMutation();
   // REMEMBER RLS POLICIES
   const { data, error } = await supabase
     .from("bookings")

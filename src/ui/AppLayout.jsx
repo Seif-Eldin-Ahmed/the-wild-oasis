@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom";
 import Header from "./Header";
 import Sidebar from "././Sidebar";
 import styled from "styled-components";
+import { useUser } from "../features/authentication/useUser";
 
 const StyledAppLayout = styled.div`
   display: grid;
@@ -33,13 +34,24 @@ const Container = styled.div`
   gap: 3.2rem;
 `;
 
+const DemoNotice = styled.div`
+  padding: 1rem 1.6rem;
+  border-radius: var(--border-radius-sm);
+  background: var(--color-blue-100);
+  color: var(--color-blue-700);
+  font-size: 1.4rem;
+`;
+
 function AppLayout() {
+  const { isDemoVisitor } = useUser();
+
   return (
     <StyledAppLayout>
       <Header />
       <Sidebar />
       <Main>
         <Container>
+          {isDemoVisitor && <DemoNotice>Demo mode · Sample data only · All changes are disabled</DemoNotice>}
           <Outlet />
         </Container>
       </Main>

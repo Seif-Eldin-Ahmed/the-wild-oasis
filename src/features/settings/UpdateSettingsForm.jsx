@@ -4,8 +4,10 @@ import Input from "../../ui/Input";
 import Spinner from "../../ui/Spinner";
 import { useSettings } from "./useSettings";
 import { useUpdateSetting } from "./useUpdateSetting";
+import { useUser } from "../authentication/useUser";
 
 function UpdateSettingsForm() {
+  const { isDemoVisitor } = useUser();
   const {
     isLoading,
     settings: {
@@ -31,7 +33,7 @@ function UpdateSettingsForm() {
         <Input
           type="number"
           id="min-nights"
-          disabled={isUpdating}
+          disabled={isDemoVisitor || isUpdating}
           defaultValue={minBookingLength}
           onBlur={(e) =>
             handleUpdate(e, "minBookingLength")
@@ -42,7 +44,7 @@ function UpdateSettingsForm() {
         <Input
           type="number"
           id="max-nights"
-          disabled={isUpdating}
+          disabled={isDemoVisitor || isUpdating}
           defaultValue={maxBookingLength}
           onBlur={(e) =>
             handleUpdate(e, "maxBookingLength")
@@ -53,7 +55,7 @@ function UpdateSettingsForm() {
         <Input
           type="number"
           id="max-guests"
-          disabled={isUpdating}
+          disabled={isDemoVisitor || isUpdating}
           defaultValue={maxGuestsPerBooking}
           onBlur={(e) =>
             handleUpdate(e, "maxGuestsPerBooking")
@@ -64,7 +66,7 @@ function UpdateSettingsForm() {
         <Input
           type="number"
           id="breakfast-price"
-          disabled={isUpdating}
+          disabled={isDemoVisitor || isUpdating}
           defaultValue={breakfastPrice}
           onBlur={(e) => handleUpdate(e, "breakfastPrice")}
         />
